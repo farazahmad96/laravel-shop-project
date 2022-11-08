@@ -1,0 +1,1 @@
+<h1>Welcome From User Controller {{$name}}</h1>
