@@ -1,39 +1,90 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Users;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserAuth;
+use App\Http\Controllers\AddMember;
+use App\Http\Controllers\UploadController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\EmployeeController;
 /*
-|--------------------------------------------------------------------------
+|-----
 | Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
+|-----
 */
-
 Route::get('/', function () {
     return view('welcome');
-    // return redirect("about");
+});
+Route::post("users",[UserController::class,'testRequest']);
+
+
+Route::post("user",[UserAuth::class,'userLogin']);
+Route::view("login",'login');
+
+
+//logout
+Route::get('/logout', function () {
+   if(session()->has('user')){
+    session()->pull('user');
+   }
+  return redirect('login');
 });
 
-// Route::get('/users/{name}', function ($name) {
-//     return view('users',['user' => $name]);
-// });
+//login
+Route::get('/login', function () {
+   if(session()->has('user')){
+    return redirect('profile');
+   }
+   return view('login');
+});
 
-Route::get("users/{name}",[UserController::class,
-'loadView']);
-// Route::view('url_name','view_name'); (we cannot pass parameter)
+//add member
+Route::view("add","add");
+Route::post("addmember",[AddMember::class,'add']);
 
-// Route::get('/about', function () {
-//     return view('about');
-// });
+// upload file 
+Route::view("upload","upload");
+Route::post("upload", [UploadController::class,'index']);
 
-// Route::view('about', 'about');
-// Route::view('contact', 'contact');
+//localization
+// Route::view("profile",'profile');
+Route::get('/profile/{lang}', function ($lang) {
+   App::setLocale($lang);
+   return view('profile');
+});
 
-// calling from controller 
-// Route::get('url_path',[ControllerName::class, 'function_name']);
-// Route::get("users/{user}",[Users::class,'index']);
+//fetch data from database
+ Route::get('list',[MemberController::class,'show']);
+
+ //adding data to database 
+ Route::view('add','addmember');
+ Route::post('add',[MemberController::class,'addData']);
+
+ //delete from database
+ Route::get('delete/{id}',[MemberController::class,'deleteData']);
+
+ //edit record in database
+ Route::get('edit/{id}',[MemberController::class,'editData']);
+
+ //Get edit data
+ Route::post('edit',[MemberController::class,'update']);
+
+ //query builder 
+ Route::get('query',[MemberController::class,'dbOperations']);
+ 
+ //aggrigate query (max,min,avg)
+ Route::get('aggrigate',[MemberController::class,'operations']);
+
+ //joins
+ Route::get('show',[EmployeeController::class,'show']);
+
+ //accessor
+ Route::get('member_accessor',[MemberController::class,'accessor']);
+
+ //mutator
+ Route::get('member_mutator',[MemberController::class,'mutator']);
+
+ //one to one
+ Route::get("data",[MemberController::class,'oneToOne']);
+
+ //one to many
+ Route::get("one-to-many",[MemberController::class,'oneToMany']);
