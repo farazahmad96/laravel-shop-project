@@ -6,13 +6,16 @@ use App\Http\Controllers\AddMember;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\DeviceController;
+use App\Mail\SampleMail;
 /*
 |-----
 | Web Routes
 |-----
 */
 Route::get('/', function () {
-    return view('welcome');
+   //  return view('welcome');
+   return new SampleMail();
 });
 Route::post("users",[UserController::class,'testRequest']);
 
@@ -88,3 +91,6 @@ Route::get('/profile/{lang}', function ($lang) {
 
  //one to many
  Route::get("one-to-many",[MemberController::class,'oneToMany']);
+
+ //routing model binding key(id,name)
+Route::get("device/{key:name}",[DeviceController::class,'index']);
